@@ -10,19 +10,28 @@ export default function LocationEntry() {
   const { latitude, longitude, loading, error, refreshLocation } = useUserLocation();
   const [locationStatus, setLocationStatus] = useState<'idle' | 'fetching' | 'success' | 'error'>('idle');
   const [locationName, setLocationName] = useState<string>('');
+  const [autoStarted, setAutoStarted] = useState(false);
 
+  // Auto-start location fetch on mount
   useEffect(() => {
-    if (locationStatus === 'idle') return;
-    
+    if (!autoStarted && !loading) {
+      setAutoStarted(true);
+      setLocationStatus('fetching');
+      refreshLocation();
+    }
+  }, []);
+
+  // Update status based on location state
+  useEffect(() => {
     if (loading) {
       setLocationStatus('fetching');
-    } else if (error) {
-      setLocationStatus('error');
     } else if (latitude && longitude) {
       setLocationStatus('success');
       fetchLocationName(latitude, longitude);
+    } else if (error) {
+      setLocationStatus('error');
     }
-  }, [loading, error, latitude, longitude, locationStatus]);
+  }, [loading, latitude, longitude, error]);
 
   const fetchLocationName = async (lat: number, lng: number) => {
     try {
@@ -49,6 +58,16 @@ export default function LocationEntry() {
       setRouterLocation('/home');
     }
   };
+
+  // Auto-continue when location is successfully obtained
+  useEffect(() => {
+    if (locationStatus === 'success' && latitude && longitude) {
+      const timer = setTimeout(() => {
+        setRouterLocation('/home');
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [locationStatus, latitude, longitude, setRouterLocation]);
 
   return (
     <div className="min-h-screen bg-background flex flex-col p-6">
