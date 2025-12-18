@@ -75,15 +75,22 @@ export default function MapPage() {
       allStations = [...allStations, ...olaCenters];
     }
     
-    return allStations.map(station => {
-      const dist = haversineDistance(userLat, userLng, station.latitude, station.longitude);
-      return { ...station, distance_km: dist };
-    }).filter(station => {
-      if (stationIdParam && station.id === stationIdParam) return true;
-      if (station.distance_km > rangeLimit) return false;
-      if (!vehicle.charger_type_supported.includes(station.charger_type)) return false;
-      return true;
-    });
+    return allStations
+      .map(station => {
+        const dist = haversineDistance(userLat, userLng, station.latitude, station.longitude);
+        return { ...station, distance_km: dist };
+      })
+      .filter(station => {
+        if (stationIdParam && station.id === stationIdParam) return true;
+        if (station.distance_km > rangeLimit) return false;
+        if (!vehicle.charger_type_supported.includes(station.charger_type)) return false;
+        if (station.connector_type !== vehicle.connector_type && !(vehicle.type === 'car' && (station.connector_type === 'CCS2' || station.connector_type === 'Type 2'))) return false;
+        // Ather Grid stations only available for Ather brand vehicles
+        if (station.id.includes('ather-grid') || station.connector_type === 'Ather Grid') {
+          if (vehicle.brand.toLowerCase() !== 'ather') return false;
+        }
+        return true;
+      });
   }, [rangeLimit, vehicle, stationIdParam, userLat, userLng, isOlaVehicle]);
 
   const selectedStation = useMemo(() => 
