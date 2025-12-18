@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { Zap, MapPin, AlertCircle, Locate } from "lucide-react";
+import { Zap, MapPin, AlertCircle, Locate, Plug } from "lucide-react";
+import { motion } from "framer-motion";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -76,23 +77,43 @@ export default function MyVehicle() {
           </div>
         </div>
 
-        <div className="relative h-64 rounded-3xl overflow-hidden glass-card p-6 flex flex-col justify-between group">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="relative h-72 rounded-3xl overflow-hidden glass-card p-8 flex flex-col justify-between group"
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-zinc-900/80 to-zinc-900 pointer-events-none" />
+          
           <div className="relative z-10">
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-xs font-bold px-2 py-0.5 rounded bg-primary text-black">CONNECTED</span>
-              <span className="text-xs text-zinc-400">{vehicle.name}</span>
+            <div className="flex items-center gap-2 mb-3">
+              <motion.span 
+                animate={{ rotate: [0, 5, -5, 0] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="text-xs font-bold px-3 py-1 rounded-full bg-gradient-to-r from-primary to-orange-500 text-black flex items-center gap-1"
+              >
+                <Plug size={14} />
+                CONNECTED
+              </motion.span>
+              <span className="text-xs text-zinc-400 font-medium">{vehicle.name}</span>
             </div>
-            <div className="flex items-baseline gap-1">
-              <span className="text-5xl font-mono font-bold tracking-tighter text-white">{soc[0]}</span>
-              <span className="text-xl font-medium text-zinc-400">%</span>
+            <div className="flex items-baseline gap-1 mb-2">
+              <motion.span 
+                key={soc[0]}
+                initial={{ scale: 1.2, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                className="text-6xl font-mono font-bold tracking-tighter text-white"
+              >
+                {soc[0]}
+              </motion.span>
+              <span className="text-2xl font-medium text-primary">%</span>
             </div>
-            <p className="text-zinc-400 text-sm mt-1">~{estimatedRange} km range remaining</p>
+            <p className="text-zinc-400 text-sm font-medium">~{estimatedRange} km range available</p>
           </div>
 
           <div className="relative z-10 w-full">
-            <div className="flex justify-between text-xs text-zinc-500 mb-2 font-medium tracking-wide">
-              <span>SET BATTERY LEVEL</span>
-              <span>{soc[0]}%</span>
+            <div className="flex justify-between items-center mb-3">
+              <span className="text-xs text-zinc-400 font-semibold tracking-widest">SET BATTERY LEVEL</span>
+              <span className="text-sm font-bold text-primary bg-primary/15 px-3 py-1 rounded-full">{soc[0]}%</span>
             </div>
             <Slider 
               defaultValue={[45]} 
@@ -102,34 +123,63 @@ export default function MyVehicle() {
               onValueChange={setSoc}
               className="cursor-pointer"
             />
+            <div className="flex justify-between text-xs text-zinc-500 mt-2 px-1">
+              <span>0%</span>
+              <span>50%</span>
+              <span>100%</span>
+            </div>
           </div>
 
           <img 
             src={vehicle.image_url} 
             alt="Vehicle" 
-            className="absolute -right-8 top-8 w-48 h-auto opacity-90 transition-transform duration-700 group-hover:scale-105"
+            className="absolute -right-12 -top-4 w-56 h-auto opacity-70 transition-transform duration-700 group-hover:scale-110 group-hover:opacity-80"
           />
-          
-          <div className="absolute inset-0 bg-gradient-to-br from-zinc-900/90 via-zinc-900/50 to-primary/5 pointer-events-none" />
-        </div>
+        </motion.div>
 
-        <div className="space-y-4">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="space-y-4"
+        >
           <div className="flex justify-between items-center">
             <h3 className="font-bold text-lg flex items-center gap-2">
-              <MapPin size={18} className="text-primary" /> 
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+              >
+                <MapPin size={20} className="text-primary" />
+              </motion.div>
               Range Radius
             </h3>
-            <span className="font-mono text-primary bg-primary/10 px-2 py-1 rounded text-sm">{rangeRadius[0]} km</span>
+            <motion.span 
+              key={rangeRadius[0]}
+              initial={{ scale: 1.2, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="font-mono text-primary bg-primary/20 px-3 py-1 rounded-lg text-sm font-bold"
+            >
+              {rangeRadius[0]} km
+            </motion.span>
           </div>
           
-          <Slider 
-            defaultValue={[20]} 
-            max={100} 
-            step={5} 
-            value={rangeRadius}
-            onValueChange={setRangeRadius}
-          />
-          <p className="text-xs text-zinc-500">
+          <div className="space-y-3">
+            <Slider 
+              defaultValue={[20]} 
+              max={50} 
+              step={1} 
+              value={rangeRadius}
+              onValueChange={setRangeRadius}
+              className="cursor-pointer"
+            />
+            <div className="flex justify-between text-xs text-zinc-500 px-1">
+              <span>1 km</span>
+              <span>25 km</span>
+              <span>50 km</span>
+            </div>
+          </div>
+
+          <p className="text-xs text-zinc-500 leading-relaxed">
             Searching for compatible {vehicle.charger_type_supported.join('/')} stations within {rangeRadius[0]}km of your current location.
           </p>
 
@@ -179,9 +229,14 @@ export default function MyVehicle() {
               </div>
             </Link>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="grid grid-cols-2 gap-4"
+        >
           <Link href={`/recommendations?range=${rangeRadius[0]}&soc=${soc[0]}`}>
             <Card className="p-4 bg-zinc-900/50 border-zinc-800 hover:border-primary/50 transition-colors cursor-pointer group">
               <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-3 group-hover:scale-110 transition-transform">
@@ -201,7 +256,7 @@ export default function MyVehicle() {
               <div className="text-xs text-zinc-500 mt-1">Health check</div>
             </Card>
           </Link>
-        </div>
+        </motion.div>
 
       </div>
     </MobileLayout>

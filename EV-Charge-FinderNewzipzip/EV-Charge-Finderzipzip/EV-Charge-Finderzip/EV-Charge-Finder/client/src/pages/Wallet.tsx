@@ -83,9 +83,16 @@ export default function WalletPage() {
   const [paymentSent, setPaymentSent] = useState(false);
 
   const handleBack = () => {
-    if (window.history.length > 1) {
-      window.history.back();
-    } else {
+    // Try to go back; if it doesn't work, go to home
+    try {
+      const result = window.history.back();
+      // If back didn't work, fallback to home after a short delay
+      setTimeout(() => {
+        if (window.location.pathname === '/wallet') {
+          setLocation("/home");
+        }
+      }, 100);
+    } catch (e) {
       setLocation("/home");
     }
   };
