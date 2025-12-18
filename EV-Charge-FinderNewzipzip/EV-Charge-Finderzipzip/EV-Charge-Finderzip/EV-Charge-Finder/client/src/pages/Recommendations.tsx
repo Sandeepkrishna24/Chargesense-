@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { useLocation as useRouterLocation, Link } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Filter, Navigation, Star, MapPin, Wrench, MapPinIcon } from "lucide-react";
+import { ArrowLeft, Filter, Navigation, Star, MapPin, Wrench, MapPinIcon, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import MobileLayout from "@/components/layout/MobileLayout";
 import { MOCK_STATIONS, MOCK_VEHICLES, calculateChargeTime, haversineDistance, getOlaServiceCenters, getQueueWaitTime } from "@/lib/mockData";
@@ -218,17 +218,15 @@ export default function Recommendations() {
                               <><span className="text-white font-bold">₹{station.price_per_unit}</span> /unit</>
                             )}
                           </div>
-                          <div className="flex gap-2">
-                            <Button size="sm" variant="outline" className="rounded-full h-9 px-4 border-zinc-700"
-                              onClick={() => {
-                                const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${station.latitude},${station.longitude}`;
-                                window.open(mapsUrl, '_blank');
-                              }}
-                            >
-                              <MapPin size={14} />
-                            </Button>
+                          <div className="flex gap-2 flex-1">
+                            <Link href={`/map?stationId=${station.id}`} className="flex-1">
+                              <Button size="sm" variant="outline" className="rounded-full h-9 w-full border-zinc-700 justify-center"
+                              >
+                                <ExternalLink size={14} />
+                              </Button>
+                            </Link>
                             <Button size="sm" className={cn(
-                              "rounded-full h-9 px-5 font-bold",
+                              "rounded-full h-9 px-5 font-bold flex-1",
                               isOlaCenter ? "bg-purple-500 hover:bg-purple-600 text-white" : "bg-primary text-black hover:bg-primary/90"
                             )}
                               onClick={() => {
