@@ -178,25 +178,35 @@ export default function LandingPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.9 }}
           >
-            <Link href="/my-vehicle">
-              <Button className="w-full h-14 rounded-2xl bg-gradient-to-r from-primary to-orange-600 hover:from-primary/90 hover:to-orange-600/90 text-black font-bold text-base group">
-                Get Started
-                <ChevronRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-              </Button>
+            <Link href="/vehicles">
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Button className="w-full h-16 rounded-3xl bg-gradient-to-r from-primary via-orange-500 to-amber-500 hover:from-primary/95 hover:via-orange-500/95 hover:to-amber-500/95 text-black font-bold text-lg group shadow-[0_0_40px_-10px_rgba(255,128,0,0.3)] hover:shadow-[0_0_50px_-5px_rgba(255,128,0,0.4)] transition-all">
+                  <Zap className="w-6 h-6 mr-2" />
+                  Get Started Now
+                  <ChevronRight className="w-6 h-6 ml-2 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </motion.div>
             </Link>
             
             <div className="flex gap-3">
               <Link href="/wallet" className="flex-1">
-                <Button variant="outline" className="w-full h-12 rounded-xl border-zinc-700 hover:bg-zinc-900 hover:border-zinc-600">
-                  <Wallet className="w-4 h-4 mr-2" />
-                  Wallet
-                </Button>
+                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                  <Button variant="outline" className="w-full h-12 rounded-2xl border-primary/30 bg-primary/5 hover:bg-primary/10 hover:border-primary/50 text-white font-semibold transition-all">
+                    <Wallet className="w-4 h-4 mr-2 text-primary" />
+                    Wallet
+                  </Button>
+                </motion.div>
               </Link>
               <Link href="/map" className="flex-1">
-                <Button variant="outline" className="w-full h-12 rounded-xl border-zinc-700 hover:bg-zinc-900 hover:border-zinc-600">
-                  <MapPin className="w-4 h-4 mr-2" />
-                  Map
-                </Button>
+                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                  <Button variant="outline" className="w-full h-12 rounded-2xl border-primary/30 bg-primary/5 hover:bg-primary/10 hover:border-primary/50 text-white font-semibold transition-all">
+                    <MapPin className="w-4 h-4 mr-2 text-primary" />
+                    Map
+                  </Button>
+                </motion.div>
               </Link>
             </div>
           </motion.div>

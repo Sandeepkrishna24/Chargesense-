@@ -232,14 +232,11 @@ export default function Recommendations() {
                               isOlaCenter ? "bg-purple-500 hover:bg-purple-600 text-white" : "bg-primary text-black hover:bg-primary/90"
                             )}
                               onClick={() => {
-                                localStorage.setItem('currentStation', station.name);
-                                localStorage.setItem('currentStationId', station.id);
-                                localStorage.setItem('currentStationLat', station.latitude.toString());
-                                localStorage.setItem('currentStationLng', station.longitude.toString());
-                                setRouterLocation('/session');
+                                const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${station.latitude},${station.longitude}`;
+                                window.open(mapsUrl, '_blank');
                               }} 
                             >
-                              Start Charging
+                              Navigate
                             </Button>
                           </div>
                         </div>
