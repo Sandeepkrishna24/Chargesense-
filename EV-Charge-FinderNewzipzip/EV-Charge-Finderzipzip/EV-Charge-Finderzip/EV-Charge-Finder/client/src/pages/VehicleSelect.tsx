@@ -30,7 +30,7 @@ export default function VehicleSelect() {
   const handleContinue = () => {
     if (selectedId) {
       localStorage.setItem('selectedVehicleId', selectedId);
-      setLocation("/location");
+      setLocation("/home");
     }
   };
 
