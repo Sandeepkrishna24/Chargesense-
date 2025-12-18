@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Wallet as WalletIcon, Plus, ArrowDownLeft, ArrowUpRight, Clock, CheckCircle2, Loader2, IndianRupee } from "lucide-react";
+import { ArrowLeft, Wallet as WalletIcon, Plus, ArrowDownLeft, ArrowUpRight, Clock, CheckCircle2, Loader2, IndianRupee, Smartphone, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useWallet } from "@/contexts/WalletContext";
@@ -11,10 +11,38 @@ import MobileLayout from "@/components/layout/MobileLayout";
 const quickAmounts = [100, 200, 500, 1000];
 
 const upiApps = [
-  { id: 'gpay', name: 'Google Pay', color: 'from-blue-500 to-blue-600' },
-  { id: 'phonepe', name: 'PhonePe', color: 'from-purple-500 to-purple-600' },
-  { id: 'paytm', name: 'Paytm', color: 'from-sky-400 to-sky-500' },
-  { id: 'upi', name: 'Other UPI', color: 'from-green-500 to-green-600' }
+  { 
+    id: 'gpay', 
+    name: 'Google Pay', 
+    color: 'from-blue-500 to-blue-600',
+    bgColor: 'bg-blue-500/20',
+    borderColor: 'border-blue-500/30',
+    icon: '🅰️'
+  },
+  { 
+    id: 'phonepe', 
+    name: 'PhonePe', 
+    color: 'from-purple-500 to-purple-600',
+    bgColor: 'bg-purple-500/20',
+    borderColor: 'border-purple-500/30',
+    icon: '📱'
+  },
+  { 
+    id: 'paytm', 
+    name: 'Paytm', 
+    color: 'from-amber-500 to-orange-600',
+    bgColor: 'bg-amber-500/20',
+    borderColor: 'border-amber-500/30',
+    icon: '₹'
+  },
+  { 
+    id: 'upi', 
+    name: 'Other UPI', 
+    color: 'from-green-500 to-green-600',
+    bgColor: 'bg-green-500/20',
+    borderColor: 'border-green-500/30',
+    icon: '🔗'
+  }
 ];
 
 export default function WalletPage() {
@@ -99,7 +127,7 @@ export default function WalletPage() {
             
             <Button 
               onClick={() => setShowAddFunds(true)}
-              className="w-full bg-black/20 hover:bg-black/30 text-black border-0 backdrop-blur-sm"
+              className="w-full bg-black/20 hover:bg-black/30 text-black border-0 backdrop-blur-sm font-bold transition-all hover:shadow-lg"
             >
               <Plus size={18} className="mr-2" />
               Add Money
@@ -144,39 +172,43 @@ export default function WalletPage() {
 
                 <div className="flex gap-2">
                   {quickAmounts.map(amt => (
-                    <button
+                    <motion.button
                       key={amt}
                       onClick={() => setAmount(amt.toString())}
-                      className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all ${
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className={`flex-1 py-3 rounded-xl text-sm font-bold transition-all ${
                         amount === amt.toString() 
-                          ? 'bg-primary text-black' 
-                          : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
+                          ? 'bg-primary text-black shadow-lg shadow-primary/50' 
+                          : 'bg-zinc-800/60 text-zinc-300 hover:bg-zinc-700/60 border border-zinc-700/50'
                       }`}
                     >
                       ₹{amt}
-                    </button>
+                    </motion.button>
                   ))}
                 </div>
 
                 <div>
-                  <label className="text-xs text-zinc-500 mb-2 block">Select UPI App to Approve</label>
-                  <div className="grid grid-cols-2 gap-2">
+                  <label className="text-xs text-zinc-500 mb-3 block font-medium">Select UPI App to Approve</label>
+                  <div className="grid grid-cols-2 gap-3">
                     {upiApps.map(app => (
-                      <button
+                      <motion.button
                         key={app.id}
                         onClick={() => setSelectedUpi(app.id)}
                         disabled={paymentSent}
-                        className={`p-3 rounded-xl border transition-all ${
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        className={`p-4 rounded-2xl border-2 transition-all ${
                           selectedUpi === app.id 
-                            ? 'border-primary bg-primary/10' 
-                            : 'border-zinc-800 bg-zinc-800/50 hover:border-zinc-700'
+                            ? `${app.borderColor} ${app.bgColor} ring-2 ring-offset-2 ring-offset-zinc-900 ring-${app.color.split(' ')[0].split('-')[1]}-500` 
+                            : `border-zinc-700/50 bg-zinc-800/30 hover:border-zinc-600 hover:bg-zinc-800/50`
                         } ${paymentSent ? 'opacity-50 cursor-not-allowed' : ''}`}
                       >
-                        <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${app.color} mb-2 flex items-center justify-center`}>
-                          <IndianRupee size={16} className="text-white" />
+                        <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${app.color} mb-2 flex items-center justify-center text-xl`}>
+                          {app.icon}
                         </div>
-                        <span className="text-xs font-medium">{app.name}</span>
-                      </button>
+                        <span className="text-xs font-semibold text-white block truncate">{app.name}</span>
+                      </motion.button>
                     ))}
                   </div>
                 </div>
