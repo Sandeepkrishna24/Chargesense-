@@ -188,7 +188,7 @@ export default function MapPage() {
                       </div>
                     )}
                     <h3 className="font-bold text-sm mb-1">{station.name}</h3>
-                    <p className="text-xs text-gray-600 mb-2">{station.distance_km} km away</p>
+                    <p className="text-xs text-gray-600 mb-2">~{station.distance_km.toFixed(1)} km away (approx)</p>
                     <div className="flex justify-between items-center text-xs text-gray-500 mb-3">
                       <span>{station.charger_type} {station.charger_power_kw}kW</span>
                       <span className={station.status === 'available' ? 'text-green-600 font-medium' : 'text-orange-600 font-medium'}>

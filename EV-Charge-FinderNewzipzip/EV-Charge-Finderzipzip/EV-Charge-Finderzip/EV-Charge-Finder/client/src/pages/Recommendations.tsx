@@ -189,9 +189,9 @@ export default function Recommendations() {
                             <h3 className="font-bold text-lg leading-tight mb-1 group-hover:text-primary transition-colors">{station.name}</h3>
                             <p className="text-xs text-zinc-400 truncate max-w-[200px]">{station.address}</p>
                           </div>
-                          <div className="flex flex-col items-end">
-                            <span className="text-2xl font-mono font-bold">{station.distance_km}<span className="text-sm text-zinc-500 font-sans">km</span></span>
-                            <span className="text-[10px] text-zinc-500">from you</span>
+                          <div className="flex flex-col items-end" title="Approximate straight-line distance">
+                            <span className="text-2xl font-mono font-bold">~{station.distance_km.toFixed(1)}<span className="text-sm text-zinc-500 font-sans">km</span></span>
+                            <span className="text-[10px] text-zinc-500">approx</span>
                           </div>
                         </div>
 
@@ -234,7 +234,8 @@ export default function Recommendations() {
                               onClick={() => {
                                 const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${station.latitude},${station.longitude}`;
                                 window.open(mapsUrl, '_blank');
-                              }} 
+                              }}
+                              title="Actual route distance may differ"
                             >
                               Navigate
                             </Button>
