@@ -134,9 +134,9 @@ export default function Login() {
           if (storedUser.name) localStorage.setItem('userName', storedUser.name);
           toast({
             title: "Welcome back!",
-            description: "Syncing your vehicle data...",
+            description: "Getting your location...",
           });
-          setLocation("/home");
+          setLocation("/location");
         }
       }, 1000);
       return;
@@ -171,10 +171,10 @@ export default function Login() {
         } else {
           toast({
             title: "Welcome back!",
-            description: "Syncing your vehicle data...",
+            description: "Getting your location...",
           });
           localStorage.setItem('userEmail', email);
-          setLocation("/home");
+          setLocation("/location");
         }
       }
     } catch (err) {
