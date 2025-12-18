@@ -13,6 +13,10 @@ export default function Recommendations() {
   const { latitude, longitude, loading: locationLoading, error: locationError } = useUserLocation();
   const [filterType, setFilterType] = useState<'all' | 'fast' | 'available' | 'cheapest' | 'ola'>('all');
 
+  const handleBack = () => {
+    setRouterLocation("/my-vehicle");
+  };
+
   const userLat = latitude ?? DEFAULT_LOCATION.lat;
   const userLng = longitude ?? DEFAULT_LOCATION.lng;
 
@@ -93,13 +97,11 @@ export default function Recommendations() {
       <div className="p-4 min-h-screen bg-black">
         
         <header className="flex items-center justify-between mb-6 sticky top-0 bg-black/80 backdrop-blur-md z-50 py-2">
-          <Link href="/home">
-            <Button variant="ghost" size="icon" className="rounded-full">
-              <ArrowLeft className="text-white" />
-            </Button>
-          </Link>
+          <Button variant="ghost" size="icon" className="rounded-full" onClick={handleBack}>
+            <ArrowLeft className="text-white" />
+          </Button>
           <h1 className="text-lg font-bold">Nearby Chargers</h1>
-          <Link href="/map">
+          <Link href={`/map?stationId=${recommendedStations[0]?.id || ''}`}>
             <Button variant="ghost" size="icon" className="rounded-full">
               <MapPin className="text-primary" size={20} />
             </Button>

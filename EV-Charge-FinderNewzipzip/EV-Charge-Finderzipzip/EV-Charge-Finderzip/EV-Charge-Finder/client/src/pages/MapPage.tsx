@@ -18,13 +18,14 @@ const userIcon = new L.DivIcon({
 
 const createStationIcon = (status: string, isOlaCenter: boolean = false) => new L.DivIcon({
   className: 'station-marker',
-  html: `<div style="width: 32px; height: 32px; background: ${isOlaCenter ? '#8b5cf6' : status === 'available' ? '#22c55e' : status === 'busy' ? '#f97316' : '#ef4444'}; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2">
+  html: `<div style="width: 44px; height: 44px; background: ${isOlaCenter ? '#8b5cf6' : status === 'available' ? '#22c55e' : status === 'busy' ? '#f97316' : '#ef4444'}; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 12px rgba(0,0,0,0.5), 0 0 8px rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; position: relative;">
+    <div style="width: 8px; height: 8px; background: white; border-radius: 50%; position: absolute; top: 2px; right: 2px; box-shadow: 0 0 4px rgba(0,0,0,0.3);"></div>
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="1.5">
       <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
     </svg>
   </div>`,
-  iconSize: [32, 32],
-  iconAnchor: [16, 32],
+  iconSize: [44, 44],
+  iconAnchor: [22, 44],
 });
 
 function MapController({ center, zoom }: { center: [number, number]; zoom: number }) {
@@ -102,7 +103,7 @@ export default function MapPage() {
     refreshLocation();
   };
 
-  const backHref = stationIdParam ? "/recommendations" : "/home";
+  const backHref = stationIdParam ? "/recommendations" : "/my-vehicle";
 
   return (
     <MobileLayout>
