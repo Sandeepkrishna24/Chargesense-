@@ -140,7 +140,7 @@ export default function WalletPage() {
   };
 
   return (
-    <MobileLayout showNav={false}>
+    <MobileLayout>
       <div className="min-h-screen bg-black p-4">
         <header className="flex items-center gap-4 mb-6">
           <motion.button

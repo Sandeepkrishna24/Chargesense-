@@ -86,14 +86,10 @@ export default function MyVehicle() {
           
           <div className="relative z-10">
             <div className="flex items-center gap-2 mb-3">
-              <motion.span 
-                animate={{ rotate: [0, 5, -5, 0] }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="text-xs font-bold px-3 py-1 rounded-full bg-gradient-to-r from-primary to-orange-500 text-black flex items-center gap-1"
-              >
+              <span className="text-xs font-bold px-3 py-1 rounded-full bg-gradient-to-r from-primary to-orange-500 text-black flex items-center gap-1">
                 <Plug size={14} />
                 CONNECTED
-              </motion.span>
+              </span>
               <span className="text-xs text-zinc-400 font-medium">{vehicle.name}</span>
             </div>
             <div className="flex items-baseline gap-1 mb-2">

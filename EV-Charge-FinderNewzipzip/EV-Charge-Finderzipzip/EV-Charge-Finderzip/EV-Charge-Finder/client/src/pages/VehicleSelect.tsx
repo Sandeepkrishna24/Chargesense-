@@ -86,7 +86,7 @@ export default function VehicleSelect() {
             <p className="text-xs mt-1">Try adjusting your search.</p>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-3">
             {filteredVehicles.map((vehicle, index) => {
               const isSelected = selectedId === vehicle.id;
               return (

@@ -22,6 +22,10 @@ export default function Session() {
 
   const stationName = localStorage.getItem('currentStation') || 'Charging Station';
   const stationId = localStorage.getItem('currentStationId') || 'unknown';
+  
+  const handleBack = () => {
+    setLocation("/recommendations");
+  };
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -86,7 +90,7 @@ export default function Session() {
   };
 
   return (
-    <MobileLayout showNav={false}>
+    <MobileLayout>
       <div className="h-screen bg-black flex flex-col p-6 relative overflow-hidden">
         
         {/* Back Button */}

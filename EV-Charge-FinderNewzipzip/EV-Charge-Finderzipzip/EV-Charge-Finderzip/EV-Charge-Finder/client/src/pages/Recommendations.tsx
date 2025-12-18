@@ -93,7 +93,7 @@ export default function Recommendations() {
   };
 
   return (
-    <MobileLayout showNav={false}>
+    <MobileLayout>
       <div className="p-4 min-h-screen bg-black">
         
         <header className="flex items-center justify-between mb-6 sticky top-0 bg-black/80 backdrop-blur-md z-50 py-2">
