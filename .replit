@@ -1,0 +1,55 @@
+modules = ["nodejs-20"]
+[nix]
+channel = "stable-25_05"
+packages = ["unzip"]
+
+[agent]
+expertMode = true
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "dev-client"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "dev-vite"
+
+[[workflows.workflow]]
+name = "dev-client"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd ./EV-Charge-FinderNewzipzip/EV-Charge-Finderzipzip/EV-Charge-Finderzip/EV-Charge-Finder && npm run dev:client"
+waitForPort = 5000
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
+[[workflows.workflow]]
+name = "dev-vite"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd ./EV-Charge-FinderNewzipzip/EV-Charge-Finderzipzip/EV-Charge-Finderzip/EV-Charge-Finder && npm run dev:client 2>&1"
+waitForPort = 5000
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+
+[[ports]]
+localPort = 5001
+externalPort = 3000
