@@ -22,9 +22,9 @@ export default function WalletPage() {
   const { toast } = useToast();
   const [showAddFunds, setShowAddFunds] = useState(false);
   const [amount, setAmount] = useState('');
-  const [upiId, setUpiId] = useState('');
   const [selectedUpi, setSelectedUpi] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [paymentSent, setPaymentSent] = useState(false);
 
   const handleAddFunds = async () => {
     const numAmount = parseFloat(amount);
@@ -32,27 +32,35 @@ export default function WalletPage() {
       toast({ variant: "destructive", title: "Invalid amount", description: "Please enter a valid amount" });
       return;
     }
-    if (!upiId.trim()) {
-      toast({ variant: "destructive", title: "UPI ID required", description: "Please enter your UPI ID" });
-      return;
-    }
     if (!selectedUpi) {
-      toast({ variant: "destructive", title: "Select payment method", description: "Please select a UPI app" });
+      toast({ variant: "destructive", title: "Select payment app", description: "Please select a UPI app" });
       return;
     }
 
     setIsProcessing(true);
     const upiApp = upiApps.find(u => u.id === selectedUpi);
-    const success = await addFunds(numAmount, upiApp?.name || 'UPI');
-    setIsProcessing(false);
-
-    if (success) {
-      toast({ title: "Success!", description: `₹${numAmount} added to wallet` });
-      setShowAddFunds(false);
-      setAmount('');
-      setUpiId('');
-      setSelectedUpi('');
-    }
+    
+    // Simulate sending payment request
+    setTimeout(() => {
+      setPaymentSent(true);
+      setIsProcessing(false);
+      toast({ 
+        title: "Payment Request Sent!", 
+        description: `₹${numAmount} request sent to your ${upiApp?.name}. Please approve in your ${upiApp?.name} app.` 
+      });
+      
+      // Auto-process after 2 seconds
+      setTimeout(() => {
+        const success = addFunds(numAmount, upiApp?.name || 'UPI');
+        if (success) {
+          setPaymentSent(false);
+          setShowAddFunds(false);
+          setAmount('');
+          setSelectedUpi('');
+          toast({ title: "Success!", description: `₹${numAmount} added to wallet` });
+        }
+      }, 2000);
+    }, 1500);
   };
 
   const formatDate = (timestamp: number) => {
@@ -108,19 +116,16 @@ export default function WalletPage() {
               className="mb-6 overflow-hidden"
             >
               <div className="p-5 rounded-2xl bg-zinc-900 border border-zinc-800 space-y-4">
-                <h3 className="font-bold text-lg">Add Money to Wallet</h3>
+                <h3 className="font-bold text-lg">Request Payment</h3>
                 
-                <div>
-                  <label className="text-xs text-zinc-500 mb-2 block">Your UPI ID</label>
-                  <Input 
-                    type="text"
-                    placeholder="user@okhdfcbank"
-                    value={upiId}
-                    onChange={(e) => setUpiId(e.target.value)}
-                    className="h-11 bg-zinc-800 border-zinc-700 text-white placeholder-zinc-600"
-                  />
-                  <p className="text-xs text-zinc-500 mt-1">Enter your UPI ID to receive payment from Google Pay</p>
-                </div>
+                {paymentSent && (
+                  <div className="p-4 rounded-xl bg-green-500/10 border border-green-500/20">
+                    <p className="text-xs text-green-400 text-center">
+                      <span className="inline-block animate-spin mr-2">✓</span>
+                      Payment request sent. Awaiting approval...
+                    </p>
+                  </div>
+                )}
 
                 <div>
                   <label className="text-xs text-zinc-500 mb-2 block">Enter Amount</label>
@@ -132,6 +137,7 @@ export default function WalletPage() {
                       value={amount}
                       onChange={(e) => setAmount(e.target.value)}
                       className="pl-10 h-12 text-xl font-bold bg-zinc-800 border-zinc-700"
+                      disabled={paymentSent}
                     />
                   </div>
                 </div>
@@ -153,17 +159,18 @@ export default function WalletPage() {
                 </div>
 
                 <div>
-                  <label className="text-xs text-zinc-500 mb-2 block">Select UPI App</label>
+                  <label className="text-xs text-zinc-500 mb-2 block">Select UPI App to Approve</label>
                   <div className="grid grid-cols-2 gap-2">
                     {upiApps.map(app => (
                       <button
                         key={app.id}
                         onClick={() => setSelectedUpi(app.id)}
+                        disabled={paymentSent}
                         className={`p-3 rounded-xl border transition-all ${
                           selectedUpi === app.id 
                             ? 'border-primary bg-primary/10' 
                             : 'border-zinc-800 bg-zinc-800/50 hover:border-zinc-700'
-                        }`}
+                        } ${paymentSent ? 'opacity-50 cursor-not-allowed' : ''}`}
                       >
                         <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${app.color} mb-2 flex items-center justify-center`}>
                           <IndianRupee size={16} className="text-white" />
@@ -178,24 +185,33 @@ export default function WalletPage() {
                   <Button 
                     variant="outline" 
                     className="flex-1 border-zinc-700"
-                    onClick={() => setShowAddFunds(false)}
+                    onClick={() => {
+                      setShowAddFunds(false);
+                      setPaymentSent(false);
+                    }}
+                    disabled={paymentSent}
                   >
                     Cancel
                   </Button>
                   <Button 
                     className="flex-1"
                     onClick={handleAddFunds}
-                    disabled={isProcessing}
+                    disabled={isProcessing || paymentSent}
                   >
                     {isProcessing ? (
                       <>
                         <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Processing...
+                        Sending...
+                      </>
+                    ) : paymentSent ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Waiting...
                       </>
                     ) : (
                       <>
                         <CheckCircle2 className="w-4 h-4 mr-2" />
-                        Add ₹{amount || '0'}
+                        Request ₹{amount || '0'}
                       </>
                     )}
                   </Button>

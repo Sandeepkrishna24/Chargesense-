@@ -136,7 +136,7 @@ export default function Login() {
             title: "Welcome back!",
             description: "Syncing your vehicle data...",
           });
-          setLocation("/vehicles");
+          setLocation("/home");
         }
       }, 1000);
       return;
@@ -174,7 +174,7 @@ export default function Login() {
             description: "Syncing your vehicle data...",
           });
           localStorage.setItem('userEmail', email);
-          setLocation("/vehicles");
+          setLocation("/home");
         }
       }
     } catch (err) {

@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { useLocation as useRouterLocation, Link } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Filter, Navigation, Star, MapPin, Wrench } from "lucide-react";
+import { ArrowLeft, Filter, Navigation, Star, MapPin, Wrench, MapPinIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import MobileLayout from "@/components/layout/MobileLayout";
 import { MOCK_STATIONS, MOCK_VEHICLES, calculateChargeTime, haversineDistance, getOlaServiceCenters, getQueueWaitTime } from "@/lib/mockData";
@@ -219,11 +219,14 @@ export default function Recommendations() {
                             )}
                           </div>
                           <div className="flex gap-2">
-                            <Link href={`/map?stationId=${station.id}`}>
-                              <Button size="sm" variant="outline" className="rounded-full h-9 px-4 border-zinc-700">
-                                <MapPin size={14} />
-                              </Button>
-                            </Link>
+                            <Button size="sm" variant="outline" className="rounded-full h-9 px-4 border-zinc-700"
+                              onClick={() => {
+                                const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${station.latitude},${station.longitude}`;
+                                window.open(mapsUrl, '_blank');
+                              }}
+                            >
+                              <MapPin size={14} />
+                            </Button>
                             <Button size="sm" className={cn(
                               "rounded-full h-9 px-5 font-bold",
                               isOlaCenter ? "bg-purple-500 hover:bg-purple-600 text-white" : "bg-primary text-black hover:bg-primary/90"
@@ -231,6 +234,8 @@ export default function Recommendations() {
                               onClick={() => {
                                 localStorage.setItem('currentStation', station.name);
                                 localStorage.setItem('currentStationId', station.id);
+                                localStorage.setItem('currentStationLat', station.latitude.toString());
+                                localStorage.setItem('currentStationLng', station.longitude.toString());
                                 setRouterLocation('/session');
                               }} 
                             >

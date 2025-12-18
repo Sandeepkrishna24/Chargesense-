@@ -22,9 +22,9 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={Login} />
+      <Route path="/home" component={LandingPage} />
       <Route path="/vehicles" component={VehicleSelect} />
       <Route path="/location" component={LocationEntry} />
-      <Route path="/home" component={LandingPage} />
       <Route path="/my-vehicle" component={MyVehicle} />
       <Route path="/recommendations" component={Recommendations} />
       <Route path="/session" component={Session} />
