@@ -67,6 +67,37 @@
   --radius: 1rem;
 }
 
+/* Mobile-friendly base styles */
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "rounding-optimizations" on;
+}
+
+/* Safe area for notch devices */
+@supports (padding: max(0px)) {
+  body {
+    padding-left: max(0px, env(safe-area-inset-left));
+    padding-right: max(0px, env(safe-area-inset-right));
+    padding-top: max(0px, env(safe-area-inset-top));
+  }
+}
+
+/* Input field minimum touch target (48px) */
+input, button, select, textarea {
+  min-height: 44px;
+  font-size: 16px;
+}
+
+/* Prevent zoom on input focus */
+input:focus {
+  font-size: 16px;
+}
+
 @layer utilities {
   .glass {
     background: rgba(255, 255, 255, 0.03);

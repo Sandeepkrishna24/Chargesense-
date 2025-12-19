@@ -170,7 +170,7 @@ export default function LocationEntry() {
             {locationStatus === 'idle' || locationStatus === 'error' ? (
               <Button
                 size="lg"
-                className="w-full h-14 text-lg bg-primary text-primary-foreground hover:bg-orange-600"
+                className="w-full h-14 text-base px-4 bg-primary text-primary-foreground hover:bg-orange-600"
                 onClick={handleGetLocation}
               >
                 <Locate className="mr-2" />

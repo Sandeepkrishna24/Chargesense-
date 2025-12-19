@@ -245,7 +245,7 @@ export default function Login() {
                 <Input 
                   type="text" 
                   placeholder="Name" 
-                  className="h-12 bg-zinc-900/50 border-zinc-800 focus:border-primary/50 transition-all text-lg"
+                  className="h-14 px-4 bg-zinc-900/50 border-zinc-800 focus:border-primary/50 transition-all text-base rounded-lg"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                 />
@@ -256,7 +256,7 @@ export default function Login() {
               <Input 
                 type="email" 
                 placeholder="Email address" 
-                className="h-12 bg-zinc-900/50 border-zinc-800 focus:border-primary/50 transition-all text-lg"
+                className="h-14 px-4 bg-zinc-900/50 border-zinc-800 focus:border-primary/50 transition-all text-lg"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -267,7 +267,7 @@ export default function Login() {
               <Input 
                 type={showPassword ? "text" : "password"}
                 placeholder="Password" 
-                className="h-12 bg-zinc-900/50 border-zinc-800 focus:border-primary/50 transition-all text-lg pr-12"
+                className="h-14 px-4 bg-zinc-900/50 border-zinc-800 focus:border-primary/50 transition-all text-lg pr-12"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
