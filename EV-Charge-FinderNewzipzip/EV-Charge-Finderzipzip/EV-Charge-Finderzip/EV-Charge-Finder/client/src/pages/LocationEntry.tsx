@@ -1,16 +1,19 @@
 import { useState, useEffect } from "react";
 import { useLocation as useRouterLocation } from "wouter";
 import { motion } from "framer-motion";
-import { MapPin, Locate, Loader2, CheckCircle, AlertCircle, ChevronRight } from "lucide-react";
+import { MapPin, Locate, Loader2, CheckCircle, AlertCircle, ChevronRight, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLocation as useUserLocation } from "@/contexts/LocationContext";
 
 export default function LocationEntry() {
   const [, setRouterLocation] = useRouterLocation();
-  const { latitude, longitude, loading, error, refreshLocation } = useUserLocation();
+  const { latitude, longitude, loading, error, refreshLocation, setManualLocation } = useUserLocation();
   const [locationStatus, setLocationStatus] = useState<'idle' | 'fetching' | 'success' | 'error'>('idle');
   const [locationName, setLocationName] = useState<string>('');
   const [autoStarted, setAutoStarted] = useState(false);
+  const [showManualSearch, setShowManualSearch] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchLoading, setSearchLoading] = useState(false);
 
   // Auto-start location fetch on mount
   useEffect(() => {
@@ -51,6 +54,33 @@ export default function LocationEntry() {
   const handleGetLocation = () => {
     setLocationStatus('fetching');
     refreshLocation();
+  };
+
+  const handleSearchLocation = async () => {
+    if (!searchQuery.trim()) return;
+    
+    setSearchLoading(true);
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&limit=1`
+      );
+      const data = await response.json();
+      
+      if (data && data[0]) {
+        const { lat, lon, display_name } = data[0];
+        setManualLocation(parseFloat(lat), parseFloat(lon));
+        setLocationStatus('success');
+        setLocationName(display_name.split(',').slice(0, 3).join(',').trim());
+        setShowManualSearch(false);
+        setSearchQuery('');
+      } else {
+        alert('Location not found. Please try a different search.');
+      }
+    } catch (err) {
+      alert('Failed to search location. Please try again.');
+    } finally {
+      setSearchLoading(false);
+    }
   };
 
   const handleContinue = () => {
@@ -176,6 +206,55 @@ export default function LocationEntry() {
             >
               Refresh Location
             </motion.button>
+          )}
+
+          {!showManualSearch && (
+            <motion.button
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="mt-2 text-sm text-primary hover:text-orange-500 transition-colors w-full text-center"
+              onClick={() => setShowManualSearch(true)}
+            >
+              Search for a different location
+            </motion.button>
+          )}
+
+          {showManualSearch && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-6 p-4 bg-zinc-800 rounded-2xl border border-zinc-700"
+            >
+              <label className="block text-sm font-medium text-zinc-300 mb-2">Enter City or Address</label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSearchLocation()}
+                  placeholder="e.g., Mumbai, Bangalore"
+                  className="flex-1 bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-white placeholder-zinc-500 focus:outline-none focus:border-primary"
+                  autoFocus
+                />
+                <Button
+                  size="sm"
+                  onClick={handleSearchLocation}
+                  disabled={searchLoading || !searchQuery.trim()}
+                  className="bg-primary text-black hover:bg-orange-600"
+                >
+                  <Search size={16} />
+                </Button>
+              </div>
+              <button
+                onClick={() => {
+                  setShowManualSearch(false);
+                  setSearchQuery('');
+                }}
+                className="mt-3 text-xs text-zinc-500 hover:text-zinc-300 w-full text-center"
+              >
+                Cancel
+              </button>
+            </motion.div>
           )}
         </motion.div>
       </div>

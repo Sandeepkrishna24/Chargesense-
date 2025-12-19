@@ -9,6 +9,7 @@ interface LocationState {
 
 interface LocationContextType extends LocationState {
   refreshLocation: () => void;
+  setManualLocation: (lat: number, lng: number) => void;
 }
 
 const DEFAULT_LAT = 13.0067;
@@ -78,11 +79,21 @@ export function LocationProvider({ children }: { children: ReactNode }) {
     fetchLocation();
   }, []);
 
+  const setManualLocation = (lat: number, lng: number) => {
+    setLocation({
+      latitude: lat,
+      longitude: lng,
+      loading: false,
+      error: null,
+    });
+  };
+
   return (
     <LocationContext.Provider
       value={{
         ...location,
         refreshLocation: fetchLocation,
+        setManualLocation,
       }}
     >
       {children}
