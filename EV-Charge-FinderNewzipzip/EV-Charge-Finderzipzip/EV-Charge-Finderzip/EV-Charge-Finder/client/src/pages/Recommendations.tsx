@@ -1,8 +1,9 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import { useLocation as useRouterLocation, Link } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Filter, Navigation, Star, MapPin, Wrench, MapPinIcon, ExternalLink } from "lucide-react";
+import { ArrowLeft, Filter, Navigation, Star, MapPin, Wrench, MapPinIcon, ExternalLink, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useSwipe } from "@/hooks/use-swipe";
 import MobileLayout from "@/components/layout/MobileLayout";
 import { MOCK_STATIONS, MOCK_VEHICLES, calculateChargeTime, haversineDistance, getOlaServiceCenters, getQueueWaitTime } from "@/lib/mockData";
 import { cn } from "@/lib/utils";
@@ -12,10 +13,29 @@ export default function Recommendations() {
   const [, setRouterLocation] = useRouterLocation();
   const { latitude, longitude, loading: locationLoading, error: locationError } = useUserLocation();
   const [filterType, setFilterType] = useState<'all' | 'fast' | 'available' | 'cheapest' | 'ola'>('all');
+  const [visibleStationIndex, setVisibleStationIndex] = useState(0);
+  const stationsContainerRef = useRef<HTMLDivElement>(null);
 
   const handleBack = () => {
     setRouterLocation("/my-vehicle");
   };
+
+  const handleSwipeLeft = () => {
+    if (recommendedStations.length > 0) {
+      setVisibleStationIndex((prev) => (prev + 1) % recommendedStations.length);
+    }
+  };
+
+  const handleSwipeRight = () => {
+    if (recommendedStations.length > 0) {
+      setVisibleStationIndex((prev) => (prev - 1 + recommendedStations.length) % recommendedStations.length);
+    }
+  };
+
+  useSwipe(stationsContainerRef, {
+    onSwipeLeft: handleSwipeLeft,
+    onSwipeRight: handleSwipeRight,
+  });
 
   const userLat = latitude ?? DEFAULT_LOCATION.lat;
   const userLng = longitude ?? DEFAULT_LOCATION.lng;
@@ -138,7 +158,14 @@ export default function Recommendations() {
           ))}
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-4" ref={stationsContainerRef}>
+          {recommendedStations.length > 0 && (
+            <div className="flex justify-center items-center gap-2 text-xs text-zinc-500 mb-2">
+              <ChevronUp size={14} className="opacity-50" />
+              <span>Swipe to browse • {visibleStationIndex + 1} of {recommendedStations.length}</span>
+              <ChevronDown size={14} className="opacity-50" />
+            </div>
+          )}
           <AnimatePresence>
             {recommendedStations.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
