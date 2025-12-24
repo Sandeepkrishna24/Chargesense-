@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { User, Settings, LogOut, ChevronRight, Car, Shield } from "lucide-react";
+import { User, Settings, LogOut, ChevronRight, Car, Shield, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import { useToast } from "@/hooks/use-toast";
 import MobileLayout from "@/components/layout/MobileLayout";
 import { MOCK_VEHICLES } from "@/lib/mockData";
 import { useAuth } from "@/contexts/AuthContext";
@@ -10,8 +11,10 @@ import { useAuth } from "@/contexts/AuthContext";
 export default function Profile() {
   const [, setLocation] = useLocation();
   const { signOut, user } = useAuth();
+  const { toast } = useToast();
   const [vehicleId, setVehicleId] = useState<string>('v1');
-  const [notifications, setNotifications] = useState(true);
+  const [notifications, setNotifications] = useState(false);
+  const [notificationError, setNotificationError] = useState<string | null>(null);
   const [userProfile, setUserProfile] = useState({ name: '', email: '' });
 
   useEffect(() => {
@@ -21,9 +24,75 @@ export default function Profile() {
     const name = localStorage.getItem('userName') || user?.user_metadata?.name || '';
     const email = localStorage.getItem('userEmail') || user?.email || '';
     setUserProfile({ name, email });
+
+    // Check if notifications are already enabled
+    if ('Notification' in window && Notification.permission === 'granted') {
+      setNotifications(true);
+    }
   }, [user]);
 
   const currentVehicle = MOCK_VEHICLES.find(v => v.id === vehicleId);
+
+  const handleNotificationToggle = async (checked: boolean) => {
+    if (!checked) {
+      setNotifications(false);
+      setNotificationError(null);
+      localStorage.setItem('notificationsEnabled', 'false');
+      return;
+    }
+
+    // Request notification permission
+    if ('Notification' in window) {
+      if (Notification.permission === 'granted') {
+        setNotifications(true);
+        setNotificationError(null);
+        localStorage.setItem('notificationsEnabled', 'true');
+        toast({
+          title: "Notifications Enabled",
+          description: "You'll receive real-time updates on charging stations.",
+        });
+      } else if (Notification.permission === 'denied') {
+        setNotifications(false);
+        setNotificationError('Notification permission denied. Please enable it in your browser settings.');
+        localStorage.setItem('notificationsEnabled', 'false');
+        toast({
+          variant: "destructive",
+          title: "Permission Denied",
+          description: "Please enable notifications in your browser settings.",
+        });
+      } else {
+        // Request permission
+        try {
+          const permission = await Notification.requestPermission();
+          if (permission === 'granted') {
+            setNotifications(true);
+            setNotificationError(null);
+            localStorage.setItem('notificationsEnabled', 'true');
+            // Send a test notification
+            new Notification('ChargeSense', {
+              body: 'Real-time charging station updates enabled!',
+              icon: '⚡',
+            });
+            toast({
+              title: "Notifications Enabled",
+              description: "You'll receive real-time updates on charging stations.",
+            });
+          } else {
+            setNotifications(false);
+            setNotificationError('Notification permission denied.');
+            localStorage.setItem('notificationsEnabled', 'false');
+          }
+        } catch (error) {
+          setNotifications(false);
+          setNotificationError('Failed to enable notifications.');
+          localStorage.setItem('notificationsEnabled', 'false');
+        }
+      }
+    } else {
+      setNotificationError('Your browser does not support notifications.');
+      localStorage.setItem('notificationsEnabled', 'false');
+    }
+  };
 
   const handleLogout = async () => {
     await signOut();
@@ -76,10 +145,19 @@ export default function Profile() {
             <div className="flex items-center justify-between p-4 border-b border-zinc-900">
               <div className="flex items-center gap-3">
                 <Settings size={18} className="text-zinc-500" />
-                <span>Push Notifications</span>
+                <div className="flex flex-col gap-1">
+                  <span>Push Notifications</span>
+                  <span className="text-xs text-zinc-500">Real-time station updates</span>
+                </div>
               </div>
-              <Switch checked={notifications} onCheckedChange={setNotifications} />
+              <Switch checked={notifications} onCheckedChange={handleNotificationToggle} />
             </div>
+            {notificationError && (
+              <div className="flex items-start gap-2 p-3 bg-red-900/20 border border-red-800/30 rounded-lg mx-3 my-2">
+                <AlertCircle size={16} className="text-red-400 mt-0.5 flex-shrink-0" />
+                <p className="text-xs text-red-300">{notificationError}</p>
+              </div>
+            )}
             <div className="flex items-center justify-between p-4 border-b border-zinc-900">
               <div className="flex items-center gap-3">
                 <Shield size={18} className="text-zinc-500" />
@@ -92,7 +170,7 @@ export default function Profile() {
 
         <Button 
           variant="destructive" 
-          className="w-full h-12 font-medium"
+          className="w-full h-14 px-4 text-base font-medium"
           onClick={handleLogout}
         >
           <LogOut size={18} className="mr-2" /> Sign Out
