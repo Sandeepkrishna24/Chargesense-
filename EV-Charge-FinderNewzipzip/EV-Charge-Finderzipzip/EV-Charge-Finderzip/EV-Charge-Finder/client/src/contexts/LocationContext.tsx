@@ -68,8 +68,8 @@ export function LocationProvider({ children }: { children: ReactNode }) {
         });
       },
       {
-        enableHighAccuracy: false,
-        timeout: 30000,
+        enableHighAccuracy: true,
+        timeout: 10000,
         maximumAge: 0,
       }
     );
