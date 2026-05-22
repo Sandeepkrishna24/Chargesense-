@@ -1,0 +1,72 @@
+Apply the following mandatory updates to the existing ChargeSense application.
+
+1️⃣ NAVIGATION & INTERACTION (STRICT)
+- Every screen must be fully navigable.
+- All buttons, cards, list items, and CTAs must be clickable and functional.
+- No static or dead UI elements are allowed.
+
+Navigation rules:
+- Use proper client-side routing.
+- Ensure a clear navigation flow between:
+  Login → Vehicle Selection → Home → Recommendations → Map → Charging Session → Analytics
+- Implement a visible Back button on all non-root screens.
+- Back button must return the user to the previous logical screen (not reload the app).
+
+2️⃣ MOBILE NAVIGATION UX
+- Implement bottom navigation for primary sections (Home, Map, Analytics, Profile).
+- Highlight active tab clearly.
+- Navigation must be thumb-friendly and responsive.
+
+3️⃣ LOCATION & RANGE LOGIC CLARIFICATIONS
+- GPS location must always take priority over manual location input if available.
+- User-specified range (KM) is the authoritative constraint for station discovery.
+- Battery percentage is for simulation only and must NOT affect station filtering.
+
+4️⃣ STRICT RECOMMENDATION PIPELINE
+The system MUST follow this order:
+- Resolve user location (GPS > manual)
+- Calculate distance using Haversine formula
+- Filter stations strictly within user-specified range radius
+- Filter by charger type and connector compatibility
+- Rank remaining stations
+- Display recommendations
+
+No step reordering is allowed.
+
+5️⃣ MAP VISIBILITY RULE
+- The map must display ONLY charging stations that pass:
+  - Range filter
+  - Charger & connector compatibility
+- Out-of-range or incompatible stations must NEVER appear on the map.
+
+6️⃣ DISTANCE DISPLAY RULE
+- All station distances must be calculated from the user’s current location.
+- Display distance in kilometers only.
+- Round to one decimal place (e.g., 3.5 km away).
+
+7️⃣ EMPTY STATE HANDLING
+- If no stations match criteria, show a clear empty state.
+- Suggest actions:
+  - Increase range
+  - Change charger/connector
+  - Update location
+
+8️⃣ UI COLOR UPDATE
+- Replace all green accent colors with ORANGE accents.
+- Orange must be used for:
+  - Primary buttons
+  - Active sliders
+  - Highlighted recommendations
+- Keep the rest of the Ather-style dark theme unchanged.
+
+9️⃣ UX POLISH
+- Add smooth transitions between screens.
+- Ensure consistent spacing, alignment, and typography.
+- Prevent accidental navigation breaks or dead ends.
+
+FINAL REQUIREMENT:
+- The app must feel like a real mobile product:
+  - Everything clickable
+  - Clear navigation
+  - Proper back behavior
+  - No broken flows
